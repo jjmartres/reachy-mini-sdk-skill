@@ -1,9 +1,9 @@
 <div align="center">
   <h1>Reachy Mini SDK Claude Skill</h1>
-  <a href="https://huggingface.co/spaces/pollen-robotics/Reachy_Mini">
-    <img src="docs/images/assets/reachy_mini_hello.gif" alt="Reachy Mini dancing"/>
-</a>
+  <a href="https://huggingface.co/spaces/pollen-robotics/Reachy_Mini"><img src="docs/assets/images/reachy_mini_dance.gif" alt="Reachy Mini dancing"/></a>
 </div>
+
+
 
 <p align="center">
     <strong>Comprehensive Claude Skill for programming Reachy Mini robots with Python SDK and REST API. Expert guidance for controlling Reachy Mini robots, integrating AI models, and building interactive applications with Claude AI.
