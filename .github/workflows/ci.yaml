@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v1
+      - name: Install dependencies
+        run: |
+          uv sync --frozen --all-extras
+      - name: Run checks
+        run: |
+          uv run ruff format --check .
+          uv run ruff check .
+          uv run mypy .
+
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v1
+      - name: Install dependencies
+        run: |
+          uv sync --frozen --all-extras
+      - name: Run skill validation
+        run: uv run python scripts/quick_validate.py skill/

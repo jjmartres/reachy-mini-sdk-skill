@@ -1,0 +1,127 @@
+name: Release Reachy Mini Skill
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up UV
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: |
+          uv sync --all-extras
+          uv pip install toml-cli
+
+      - name: Get version from tag
+        id: tag_name
+        run: |
+          TAG=${GITHUB_REF#refs/tags/v}
+          echo "tag=$TAG" >> $GITHUB_ENV
+          echo "Tag version: $TAG"
+
+      - name: Update pyproject.toml version
+        run: |
+          uv run toml set --toml-path pyproject.toml project.version "${{ env.tag }}"
+          echo "Updated pyproject.toml to version ${{ env.tag }}"
+
+      - name: Update METADATA.yaml version
+        run: |
+          sed -i "s/^version: .*/version: ${{ env.tag }}/" skill/METADATA.yaml
+          echo "Updated METADATA.yaml to version ${{ env.tag }}"
+
+      - name: Verify skill structure
+        run: |
+          echo "Checking skill files..."
+          test -f skill/SKILL.md && echo "✅ SKILL.md found" || exit 1
+          test -f skill/LICENSE.txt && echo "✅ LICENSE.txt found" || exit 1
+          test -f skill/METADATA.yaml && echo "✅ METADATA.yaml found" || exit 1
+          test -d skill/references && echo "✅ references/ found" || exit 1
+
+      - name: Package skill
+        run: |
+          echo "📦 Packaging Reachy Mini Skill..."
+          mkdir -p dist
+          uv run python scripts/package_skill.py skill/ dist/
+
+          # Verify package was created
+          if [ -f "dist/reachy-mini-sdk.skill" ]; then
+            echo "✅ Package created successfully"
+            ls -lh dist/reachy-mini-sdk.skill
+          else
+            echo "❌ Package creation failed"
+            exit 1
+          fi
+
+      - name: Rename skill with version
+        run: |
+          cd dist
+          mv reachy-mini-sdk.skill reachy-mini-sdk-v${{ env.tag }}.skill
+          echo "✅ Renamed to reachy-mini-sdk-v${{ env.tag }}.skill"
+          ls -lh reachy-mini-sdk-v${{ env.tag }}.skill
+
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum reachy-mini-sdk-v${{ env.tag }}.skill > reachy-mini-sdk-v${{ env.tag }}.skill.sha256
+          cat reachy-mini-sdk-v${{ env.tag }}.skill.sha256
+
+      - name: Commit version updates
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml skill/METADATA.yaml
+          git diff --staged --quiet || git commit -m "chore(release): bump version to v${{ env.tag }}"
+          git push || echo "Nothing to commit or push failed (might be expected)"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            dist/reachy-mini-sdk-v${{ env.tag }}.skill
+            dist/reachy-mini-sdk-v${{ env.tag }}.skill.sha256
+          body: |
+            ## 🤖 Reachy Mini Claude Skill v${{ env.tag }}
+
+            ### 📦 Installation
+
+            1. Download `reachy-mini-sdk-v${{ env.tag }}.skill`
+            2. In Claude.ai: Settings → Skills → Upload Skill
+            3. Select the downloaded file
+
+            ### 🔐 Verification
+
+            Verify the download integrity:
+            ```bash
+            sha256sum -c reachy-mini-sdk-v${{ env.tag }}.skill.sha256
+            ```
+
+            ### 📚 Documentation
+
+            - [README](https://github.com/jjmartres/reachy-mini-sdk-skill#readme)
+            - [Usage Guide](https://github.com/jjmartres/reachy-mini-sdk-skill/blob/main/docs/USAGE_GUIDE.md)
+
+            ### 🙏 Acknowledgments
+
+            - [Pollen Robotics](https://pollen-robotics.com) - Reachy Mini creators
+            - [Anthropic](https://anthropic.com) - Claude AI platform

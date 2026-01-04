@@ -1,0 +1,118 @@
+# Reachy Mini SDK Skill - Extended Metadata
+
+name: reachy-mini-sdk
+description: Programming guide for Reachy Mini robot using Python SDK v1.2.6 and REST API. Use when controlling Reachy Mini robots, programming movements (head/antennas/body), accessing sensors (camera/microphone/IMU), recording motions, building AI applications, deploying to Hugging Face, or using the daemon REST API. Covers SDK patterns, coordinate systems, interpolation methods, app management, and OpenAPI client generation.
+
+license: MIT
+license_file: LICENSE.txt
+
+version: 2.2.0
+sdk_version: 1.2.6
+openapi_version: 3.1.0
+
+# Author information
+author: Jean-Jacques Martres
+email: jjmartres@gmail.com
+github: jjmartres
+repository: https://github.com/jjmartres/reachy-mini-sdk-skill
+upstream: https://github.com/pollen-robotics/reachy_mini
+
+# Skill characteristics
+type: documentation
+domain: robotics
+languages:
+  - python
+  - javascript
+  - go
+  - rust
+platforms:
+  - reachy-mini-wireless
+  - reachy-mini-lite
+  - simulation
+
+# Features
+features:
+  - movement_control
+  - sensor_access
+  - ai_integration
+  - rest_api
+  - openapi_schema
+  - app_management
+  - huggingface_integration
+
+# Reference files included
+references:
+  - installation.md
+  - movement_control.md
+  - sensors.md
+  - ai_integration.md
+  - daemon_api.md
+  - openapi_schema.json
+  - openapi_usage.md
+  - api_quick_reference.md
+
+# Statistics
+lines_skill_md: 241
+lines_total: ~3000
+token_count_skill: ~2200
+token_count_total: ~15000
+
+# Dependencies (for SDK usage)
+python_version: ">=3.12"
+dependencies:
+  - reachy-mini>=1.2.6
+  - numpy
+  - opencv-python
+  - requests
+
+# Tags
+tags:
+  - robotics
+  - reachy-mini
+  - python-sdk
+  - rest-api
+  - openapi
+  - ai
+  - huggingface
+  - motion-control
+  - computer-vision
+  - voice
+
+# Related resources
+resources:
+  official_sdk: https://github.com/pollen-robotics/reachy_mini
+  huggingface_hub: https://hf.co/reachy-mini
+  discord: https://discord.gg/Y7FgMqHsub
+  documentation: https://github.com/pollen-robotics/reachy_mini/tree/1.2.6/docs
+
+# Changelog
+changelog:
+  - version: 2.2.0
+    date: 2025-01-04
+    changes:
+      - Optimized SKILL.md following official Anthropic guidelines (-50% size)
+      - Added license metadata
+      - Removed redundant "When to Use" section from body
+      - Applied "Concise is Key" principle
+  - version: 2.1.0
+    date: 2025-01-04
+    changes:
+      - Added OpenAPI schema (openapi_schema.json)
+      - Added OpenAPI usage guide (openapi_usage.md)
+      - Enhanced SKILL.md with OpenAPI references
+  - version: 2.0.0
+    date: 2025-01-03
+    changes:
+      - Added complete REST API reference (daemon_api.md)
+      - Added app management documentation
+      - Added motor control modes
+      - Added audio control
+      - Enhanced with OpenAPI schema information
+  - version: 1.0.0
+    date: 2025-01-03
+    changes:
+      - Initial release
+      - Python SDK documentation
+      - Movement control guide
+      - Sensor access guide
+      - AI integration guide
