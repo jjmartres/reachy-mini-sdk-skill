@@ -36,7 +36,7 @@
 
 ### Option 1: Download Pre-built Skill (Recommended)
 
-1. Go to [Releases](https://github.com/jjmartres/reachy-mini-sdkskill/releases)
+1. Go to [Releases](https://github.com/jjmartres/reachy-mini-sdk-skill/releases)
 2. Download `reachy-mini-sdk.skill`
 3. In **Claude.ai**: Settings → Skills → Upload Skill
 4. Select the downloaded file
