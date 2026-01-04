@@ -1,6 +1,8 @@
 <div align="center">
   <h1>Reachy Mini SDK Claude Skill</h1>
-  <a href="https://huggingface.co/spaces/pollen-robotics/Reachy_Mini"><img src="https://raw.githubusercontent.com/pollen-robotics/reachy_mini/main/docs/assets/reachy_mini_hello.gif" alt="Reachy Mini dancing"/></a>
+  <a href="https://huggingface.co/spaces/pollen-robotics/Reachy_Mini">
+    <img src="docs/images/assets/reachy_mini_hello.gif" alt="Reachy Mini dancing"/>
+</a>
 </div>
 
 <p align="center">
