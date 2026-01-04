@@ -32,14 +32,14 @@ def validate_skill(skill_dir: Path) -> bool:
         return False
 
     # Read and parse YAML frontmatter
-    content = skill_md.read_text(encoding='utf-8')
+    content = skill_md.read_text(encoding="utf-8")
 
-    if not content.startswith('---'):
+    if not content.startswith("---"):
         print("❌ Error: SKILL.md missing YAML frontmatter (must start with '---')")
         return False
 
     # Extract YAML frontmatter
-    parts = content.split('---', 2)
+    parts = content.split("---", 2)
     if len(parts) < 3:
         print("❌ Error: Invalid YAML frontmatter format")
         return False
@@ -55,11 +55,11 @@ def validate_skill(skill_dir: Path) -> bool:
         print("❌ Error: Empty YAML frontmatter")
         return False
 
-    if 'name' not in metadata:
+    if "name" not in metadata:
         print("❌ Error: Missing required field: name")
         return False
 
-    if 'description' not in metadata:
+    if "description" not in metadata:
         print("❌ Error: Missing required field: description")
         return False
 
@@ -78,10 +78,10 @@ def package_skill(skill_dir: Path, output_dir: Path) -> Path:
     """
     # Read skill name from SKILL.md
     skill_md = skill_dir / "SKILL.md"
-    content = skill_md.read_text(encoding='utf-8')
-    parts = content.split('---', 2)
+    content = skill_md.read_text(encoding="utf-8")
+    parts = content.split("---", 2)
     metadata = yaml.safe_load(parts[1])
-    skill_name = metadata['name']
+    skill_name = metadata["name"]
 
     # Create output directory if needed
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -90,9 +90,9 @@ def package_skill(skill_dir: Path, output_dir: Path) -> Path:
     output_file = output_dir / f"{skill_name}.skill"
 
     # Create zip file
-    with zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED) as zf:
+    with zipfile.ZipFile(output_file, "w", zipfile.ZIP_DEFLATED) as zf:
         # Add all files from skill directory
-        for file_path in skill_dir.rglob('*'):
+        for file_path in skill_dir.rglob("*"):
             if file_path.is_file():
                 # Calculate relative path
                 arcname = file_path.relative_to(skill_dir.parent)
@@ -104,20 +104,14 @@ def package_skill(skill_dir: Path, output_dir: Path) -> Path:
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Package a Claude skill into a .skill file"
-    )
+    parser = argparse.ArgumentParser(description="Package a Claude skill into a .skill file")
+    parser.add_argument("skill_dir", type=Path, help="Path to skill directory")
     parser.add_argument(
-        'skill_dir',
+        "output_dir",
         type=Path,
-        help='Path to skill directory'
-    )
-    parser.add_argument(
-        'output_dir',
-        type=Path,
-        nargs='?',
+        nargs="?",
         default=Path.cwd(),
-        help='Output directory (default: current directory)'
+        help="Output directory (default: current directory)",
     )
 
     args = parser.parse_args()
@@ -150,5 +144,5 @@ def main():
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
