@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="LICENSE.txt"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+    <a href="LICENSE.txt"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
     <a href="skill/references/openapi_schema.json"><img src="https://img.shields.io/badge/OpenAPI-3.1.0-green.svg" alt="OpenAPI"></a>
     <a href="https://github.com/pollen-robotics/reachy_mini"><img src="https://img.shields.io/badge/SDK-v1.2.6-orange.svg" alt="SDK Version"></a>
     <a href="https://claude.ai"><img src="https://img.shields.io/badge/Claude-Skills-purple.svg" alt="Claude Skills"></a>
