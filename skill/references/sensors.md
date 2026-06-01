@@ -169,23 +169,28 @@ mini.media.push_audio_sample(samples)
 
 ### Get IMU Data
 
+On v1.8.0 `mini.imu` is a **property** that returns a dict (or `None` on the Lite
+version, in simulation, or before the first sample at 50 Hz). It is not a method.
+
 ```python
 with ReachyMini() as mini:
-    if hasattr(mini, 'imu'):
-        imu_data = mini.imu.get_data()
-        print(f"Acceleration: {imu_data.acceleration}")
-        print(f"Gyroscope: {imu_data.gyroscope}")
-        print(f"Orientation: {imu_data.orientation}")
+    imu_data = mini.imu
+    if imu_data is not None:
+        print(f"Accelerometer: {imu_data['accelerometer']}")
+        print(f"Gyroscope: {imu_data['gyroscope']}")
+        print(f"Quaternion: {imu_data['quaternion']}")
+        print(f"Temperature: {imu_data['temperature']}")
     else:
-        print("IMU not available (Lite version or simulation)")
+        print("IMU not available (Lite version or no data yet)")
 ```
 
 ### IMU Data Structure
 
 ```python
-imu_data.acceleration  # [x, y, z] in m/s²
-imu_data.gyroscope     # [x, y, z] in rad/s
-imu_data.orientation   # [roll, pitch, yaw] in radians
+imu_data["accelerometer"]  # [x, y, z] in m/s²
+imu_data["gyroscope"]      # [x, y, z] in rad/s
+imu_data["quaternion"]     # [w, x, y, z] orientation quaternion
+imu_data["temperature"]    # float, °C
 ```
 
 ### IMU Examples
@@ -196,21 +201,22 @@ import numpy as np
 
 threshold = 2.0  # m/s²
 
-imu_data = mini.imu.get_data()
-accel_magnitude = np.linalg.norm(imu_data.acceleration)
-
-if accel_magnitude > threshold:
-    print("Motion detected!")
+imu_data = mini.imu
+if imu_data is not None:
+    accel_magnitude = np.linalg.norm(imu_data["accelerometer"])
+    if accel_magnitude > threshold:
+        print("Motion detected!")
 ```
 
-**Monitor orientation:**
+**Monitor orientation (quaternion -> euler):**
 ```python
-imu_data = mini.imu.get_data()
-roll, pitch, yaw = imu_data.orientation
+from scipy.spatial.transform import Rotation as R
 
-print(f"Roll: {np.rad2deg(roll):.1f}°")
-print(f"Pitch: {np.rad2deg(pitch):.1f}°")
-print(f"Yaw: {np.rad2deg(yaw):.1f}°")
+imu_data = mini.imu
+w, x, y, z = imu_data["quaternion"]
+roll, pitch, yaw = R.from_quat([x, y, z, w]).as_euler("xyz", degrees=True)
+
+print(f"Roll: {roll:.1f}°  Pitch: {pitch:.1f}°  Yaw: {yaw:.1f}°")
 ```
 
 ## Best Practices

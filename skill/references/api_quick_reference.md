@@ -168,12 +168,13 @@ motion.play()
 ## IMU (Wireless only)
 
 ```python
-# Get data
-if hasattr(mini, 'imu'):
-    data = mini.imu.get_data()
-    accel = data.acceleration  # [x, y, z] m/s²
-    gyro = data.gyroscope      # [x, y, z] rad/s
-    orient = data.orientation  # [roll, pitch, yaw] radians
+# mini.imu is a PROPERTY returning a dict (or None on Lite / before first sample)
+data = mini.imu
+if data is not None:
+    accel = data["accelerometer"]  # [x, y, z] m/s²
+    gyro  = data["gyroscope"]      # [x, y, z] rad/s
+    quat  = data["quaternion"]     # [w, x, y, z] orientation quaternion
+    temp  = data["temperature"]    # °C
 ```
 
 ## AI Integration
@@ -225,7 +226,7 @@ mini.goto_target(..., method="linear")
 mini.goto_target(..., method="minjerk")
 
 # Ease in/out
-mini.goto_target(..., method="ease")
+mini.goto_target(..., method="ease_in_out")
 
 # Cartoon (exaggerated)
 mini.goto_target(..., method="cartoon")

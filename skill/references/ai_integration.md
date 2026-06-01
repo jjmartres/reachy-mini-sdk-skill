@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
 **requirements.txt:**
 ```
-reachy-mini>=1.2.0
+reachy-mini>=1.8.0
 gradio>=4.0.0
 numpy
 ```

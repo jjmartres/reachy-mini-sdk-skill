@@ -1,6 +1,6 @@
 [project]
 name = "reachy-mini-sdk-skill"
-version = "2.2.0"
+version = "2.3.0"
 description = "Comprehensive Claude Skill for programming Reachy Mini robots with Python SDK and REST API"
 authors = [{ name = "Jean-Jacques Martres", email = "jjmartres@gmail.com" }]
 readme = "README.md"

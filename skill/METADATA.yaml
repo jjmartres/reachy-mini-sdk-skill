@@ -1,13 +1,13 @@
 # Reachy Mini SDK Skill - Extended Metadata
 
 name: reachy-mini-sdk
-description: Programming guide for Reachy Mini robot using Python SDK v1.2.6 and REST API. Use when controlling Reachy Mini robots, programming movements (head/antennas/body), accessing sensors (camera/microphone/IMU), recording motions, building AI applications, deploying to Hugging Face, or using the daemon REST API. Covers SDK patterns, coordinate systems, interpolation methods, app management, and OpenAPI client generation.
+description: Programming guide for Reachy Mini robot using Python SDK v1.8.0 and REST API. Use when controlling Reachy Mini robots, programming movements (head/antennas/body), accessing sensors (camera/microphone/IMU), recording motions, building AI applications, deploying to Hugging Face, or using the daemon REST API. Covers SDK patterns, coordinate systems, interpolation methods, app management, and OpenAPI client generation.
 
 license: MIT
 license_file: LICENSE.txt
 
-version: 2.2.0
-sdk_version: 1.2.6
+version: 2.3.0
+sdk_version: 1.8.0
 openapi_version: 3.1.0
 
 # Author information
@@ -60,7 +60,7 @@ token_count_total: ~15000
 # Dependencies (for SDK usage)
 python_version: ">=3.12"
 dependencies:
-  - reachy-mini>=1.2.6
+  - reachy-mini>=1.8.0
   - numpy
   - opencv-python
   - requests
@@ -83,10 +83,21 @@ resources:
   official_sdk: https://github.com/pollen-robotics/reachy_mini
   huggingface_hub: https://hf.co/reachy-mini
   discord: https://discord.gg/Y7FgMqHsub
-  documentation: https://github.com/pollen-robotics/reachy_mini/tree/1.2.6/docs
+  documentation: https://github.com/pollen-robotics/reachy_mini/tree/1.8.0/docs
 
 # Changelog
 changelog:
+  - version: 2.3.0
+    date: 2026-06-01
+    changes:
+      - Aligned skill with Reachy Mini SDK / daemon v1.8.0 (was v1.2.6)
+      - Replaced openapi_schema.json with live v1.8.0 spec (41 -> 85 endpoints)
+      - Populated daemon_api.md (full 85-endpoint REST reference) and openapi_usage.md
+      - Fixed REST paths in SKILL.md (/api/move/goto, /api/state/full, /api/motors/set_mode/{mode})
+      - Corrected create_head_pose return type (4x4 ndarray, not a HeadPose object)
+      - Fixed interpolation enum value ease -> ease_in_out
+      - Rewrote IMU access (mini.imu is now a property returning a dict; quaternion orientation)
+      - Updated motion-recording section (no Motion class; stop_recording returns frame list)
   - version: 2.2.0
     date: 2025-01-04
     changes:
