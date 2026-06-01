@@ -227,6 +227,7 @@ for angle in [-60, -30, 0, 30, 60]:
 - **sensors.md** - Camera, microphone, IMU access
 - **ai_integration.md** - AI models, LLMs, apps, deployment
 - **daemon_api.md** - REST API reference (85 endpoints, v1.8.0)
+- **daemon_operations.md** - Operating the daemon: app lock, motor modes, media, recovery
 - **openapi_schema.json** - OpenAPI v3.1.0 spec for client generation
 - **openapi_usage.md** - Using OpenAPI for automation
 - **api_quick_reference.md** - Quick reference card

@@ -47,6 +47,7 @@ references:
   - sensors.md
   - ai_integration.md
   - daemon_api.md
+  - daemon_operations.md
   - openapi_schema.json
   - openapi_usage.md
   - api_quick_reference.md
@@ -93,6 +94,7 @@ changelog:
       - Aligned skill with Reachy Mini SDK / daemon v1.8.0 (was v1.2.6)
       - Replaced openapi_schema.json with live v1.8.0 spec (41 -> 85 endpoints)
       - Populated daemon_api.md (full 85-endpoint REST reference) and openapi_usage.md
+      - Added daemon_operations.md (app lock, motor modes, media acquisition, crash recovery)
       - Fixed REST paths in SKILL.md (/api/move/goto, /api/state/full, /api/motors/set_mode/{mode})
       - Corrected create_head_pose return type (4x4 ndarray, not a HeadPose object)
       - Fixed interpolation enum value ease -> ease_in_out
