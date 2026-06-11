@@ -18,26 +18,29 @@ Reachy Mini has three main controllable parts:
 
 ```python
 mini.goto_target(
-    head=head_pose,        # HeadPose object or None
+    head=head_pose,          # 4x4 numpy ndarray (from create_head_pose) or None
     antennas=[left, right],  # List of 2 floats (radians) or None
     body_yaw=angle,          # Float (radians) or None
     duration=1.0,            # Movement duration in seconds
-    method="minjerk"         # Interpolation method
+    method="minjerk"         # Interpolation technique
 )
 ```
 
-**Parameters:**
-- `head`: HeadPose object (use `create_head_pose()`)
-- `antennas`: [left_angle, right_angle] in radians
-- `body_yaw`: Body rotation in radians
-- `duration`: Time to complete movement (seconds)
-- `method`: Interpolation method
+Full v1.8.0 signature:
+`goto_target(head=None, antennas=None, duration=0.5, method=InterpolationTechnique.MIN_JERK, body_yaw=0.0)`
 
-**Interpolation Methods:**
-- `"linear"`: Constant velocity
-- `"minjerk"`: Smooth acceleration/deceleration (default, most natural)
-- `"ease"`: Ease in/out
-- `"cartoon"`: Exaggerated, cartoon-like motion
+**Parameters:**
+- `head`: 4x4 numpy ndarray (build with `create_head_pose()`) or None
+- `antennas`: [left_angle, right_angle] in radians (list or ndarray)
+- `body_yaw`: Body rotation in radians
+- `duration`: Time to complete movement (seconds, default 0.5)
+- `method`: `InterpolationTechnique` enum or its string value
+
+**Interpolation Techniques** (`reachy_mini.utils.interpolation.InterpolationTechnique`):
+- `"linear"` (`LINEAR`): Constant velocity
+- `"minjerk"` (`MIN_JERK`): Smooth acceleration/deceleration (default, most natural)
+- `"ease_in_out"` (`EASE_IN_OUT`): Ease in/out
+- `"cartoon"` (`CARTOON`): Exaggerated, cartoon-like motion
 
 **Example:**
 ```python
@@ -132,7 +135,7 @@ pose = create_head_pose(
     degrees=True
 )
 
-# Using radians and meters (default)
+# Using radians and meters
 pose = create_head_pose(
     z=0.010,  # 10mm in meters
     roll=0.26,  # ~15 degrees in radians
@@ -141,11 +144,14 @@ pose = create_head_pose(
 )
 ```
 
-**HeadPose object:**
-```python
-pose.position  # numpy array [x, y, z]
-pose.orientation  # numpy array [roll, pitch, yaw]
-```
+**Defaults:** `create_head_pose(x=0, y=0, z=0, roll=0, pitch=0, yaw=0, mm=False, degrees=True)`
+— so positions are meters and angles are degrees unless you pass `mm=True` / `degrees=False`.
+
+**Return value:** `create_head_pose()` returns a **4x4 numpy ndarray** (a homogeneous
+transform), not a HeadPose object. Pass it straight to `goto_target(head=...)` /
+`set_target(head=...)`. There is no `.position` / `.orientation` attribute on v1.8.0;
+read the live head pose back with `mini.get_current_head_pose()` or
+`GET /api/state/present_head_pose`.
 
 ### Head Movement Limits
 

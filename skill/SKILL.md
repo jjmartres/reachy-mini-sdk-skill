@@ -1,6 +1,6 @@
 ---
 name: reachy-mini-sdk
-description: Programming guide for Reachy Mini robot using Python SDK v1.2.6 and REST API. Use when controlling Reachy Mini robots, programming movements (head/antennas/body), accessing sensors (camera/microphone/IMU), recording motions, building AI applications, deploying to Hugging Face, or using the daemon REST API. Covers SDK patterns, coordinate systems, interpolation methods, app management, and OpenAPI client generation.
+description: Programming guide for Reachy Mini robot using Python SDK v1.8.0 and REST API. Use when controlling Reachy Mini robots, programming movements (head/antennas/body), accessing sensors (camera/microphone/IMU), recording motions, building AI applications, deploying to Hugging Face, or using the daemon REST API. Covers SDK patterns, coordinate systems, interpolation methods, app management, and OpenAPI client generation.
 license: MIT (see LICENSE.txt)
 ---
 
@@ -47,12 +47,13 @@ See `references/movement_control.md` for complete guide (450+ lines with all pat
 from reachy_mini.utils import create_head_pose
 import numpy as np
 
+# create_head_pose returns a 4x4 numpy ndarray (not a HeadPose object)
 mini.goto_target(
     head=create_head_pose(z=10, roll=15, degrees=True, mm=True),
     antennas=np.deg2rad([45, 45]),
     body_yaw=np.deg2rad(30),
     duration=2.0,
-    method="minjerk"  # linear, ease, cartoon
+    method="minjerk"  # linear | minjerk | ease_in_out | cartoon
 )
 ```
 
@@ -85,26 +86,28 @@ frame = mini.media.get_frame()
 samples = mini.media.get_audio_sample()
 mini.media.push_audio_sample(samples)  # Non-blocking
 
-# IMU (Wireless only)
-if hasattr(mini, 'imu'):
-    data = mini.imu.get_data()
+# IMU (Wireless only) - mini.imu is a property returning a dict, or None
+data = mini.imu
+if data is not None:
+    accel, gyro, quat = data["accelerometer"], data["gyroscope"], data["quaternion"]
 ```
 
 ## Motion Recording
 
 ```python
 mini.start_recording()
-# Move robot
-motion = mini.stop_recording()
-motion.save("demo.pkl")
-
-# Replay
-motion.play()
+# Move robot (e.g. by hand in gravity_compensation, or via goto_target)
+frames = mini.stop_recording()   # returns a list of timestamped joint frames
 ```
+
+`stop_recording()` returns a list of frame dicts (there is no `Motion` class on v1.8.0).
+Replay an authored move with `mini.play_move(move)` / `mini.async_play_move(move)`, or
+play a saved dataset move over REST:
+`POST /api/move/play/recorded-move-dataset/{dataset_name}/{move_name}`.
 
 ## REST API
 
-See `references/daemon_api.md` for all 25+ endpoints.
+See `references/daemon_api.md` for all 85 endpoints (v1.8.0).
 See `references/openapi_usage.md` for client generation.
 
 ### Direct HTTP Control
@@ -112,15 +115,17 @@ See `references/openapi_usage.md` for client generation.
 ```python
 import requests
 
-# Move via API
-requests.post("http://localhost:8000/api/goto", json={
+# Move via API (head_pose: x,y,z in meters; roll,pitch,yaw in radians)
+requests.post("http://localhost:8000/api/move/goto", json={
     "head_pose": {"x": 0, "y": 0, "z": 0.01, "roll": 0, "pitch": 0, "yaw": 0},
+    "antennas": [0.5, -0.5],
+    "body_yaw": 0.2,
     "duration": 2.0,
     "interpolation": "minjerk"
 })
 
 # Get state
-state = requests.get("http://localhost:8000/api/state/full-state").json()
+state = requests.get("http://localhost:8000/api/state/full").json()
 ```
 
 ### Generate Clients
@@ -153,19 +158,24 @@ requests.post("http://localhost:8000/api/apps/start-app/hand_tracker")
 
 ## Motor Modes
 
+The mode is a **path segment** (`/api/motors/set_mode/{mode}`), not a JSON body:
+
 ```python
 # Compliant (manual movement)
-requests.post("http://localhost:8000/api/motors/set-mode", 
-              json={"mode": "disabled"})
+requests.post("http://localhost:8000/api/motors/set_mode/disabled")
 
 # Active control
-requests.post("http://localhost:8000/api/motors/set-mode", 
-              json={"mode": "enabled"})
+requests.post("http://localhost:8000/api/motors/set_mode/enabled")
 
 # Gravity compensation
-requests.post("http://localhost:8000/api/motors/set-mode", 
-              json={"mode": "gravity_compensation"})
+requests.post("http://localhost:8000/api/motors/set_mode/gravity_compensation")
+
+# Current mode
+requests.get("http://localhost:8000/api/motors/status").json()  # {"mode": "..."}
 ```
+
+SDK equivalents: `mini.enable_motors()`, `mini.disable_motors()`,
+`mini.enable_gravity_compensation()`, `mini.disable_gravity_compensation()`.
 
 ## AI Integration
 
@@ -216,7 +226,8 @@ for angle in [-60, -30, 0, 30, 60]:
 - **movement_control.md** - Complete movement guide (450+ lines)
 - **sensors.md** - Camera, microphone, IMU access
 - **ai_integration.md** - AI models, LLMs, apps, deployment
-- **daemon_api.md** - REST API reference (500+ lines, 25+ endpoints)
+- **daemon_api.md** - REST API reference (85 endpoints, v1.8.0)
+- **daemon_operations.md** - Operating the daemon: app lock, motor modes, media, recovery
 - **openapi_schema.json** - OpenAPI v3.1.0 spec for client generation
 - **openapi_usage.md** - Using OpenAPI for automation
 - **api_quick_reference.md** - Quick reference card
@@ -236,6 +247,6 @@ for angle in [-60, -30, 0, 30, 60]:
 
 ## Version
 
-SDK v1.2.6, OpenAPI v3.1.0
+SDK v1.8.0, OpenAPI v3.1.0
 
-Source: https://github.com/pollen-robotics/reachy_mini/tree/1.2.6
+Source: https://github.com/pollen-robotics/reachy_mini/tree/1.8.0
